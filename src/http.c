@@ -67,5 +67,9 @@ int main(int argc, char *argv[]) {
 	}
 	printf("Retrieving document: '%s'\n", path);
 
+	if (close(client_connection) == -1) {
+		perror("Error closing client connection");
+		return 5;
+	}
 	return 0;
 }
