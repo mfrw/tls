@@ -1,3 +1,5 @@
+#include "http.h"
+
 #include <errno.h>
 #include <netdb.h>
 #include <netinet/in.h>
@@ -8,6 +10,8 @@
 #include <unistd.h>
 
 #define HTTP_PORT 80
+#define MAX_GET_COMMAND 255
+#define BUFFER_SIZE 255
 
 int parse_url(char *uri, char **host, char **path) {
 	char *pos;
@@ -67,9 +71,40 @@ int main(int argc, char *argv[]) {
 	}
 	printf("Retrieving document: '%s'\n", path);
 
+	http_get(client_connection, path, host);
+	display_result(client_connection);
+	printf("Shutting down.\n");
+
 	if (close(client_connection) == -1) {
 		perror("Error closing client connection");
 		return 5;
 	}
 	return 0;
+}
+
+int http_get(int connection, const char *path, const char *host) {
+	static char get_command[MAX_GET_COMMAND];
+	sprintf(get_command, "GET /%s HTTP/1.1\r\n", path);
+	if (send(connection, get_command, strlen(get_command), 0) == -1) {
+		return -1;
+	}
+	sprintf(get_command, "Host: %s\r\n", host);
+	if (send(connection, get_command, strlen(get_command), 0) == -1) {
+		return -1;
+	}
+	sprintf(get_command, "Connection: close\r\n\r\n");
+	if (send(connection, get_command, strlen(get_command), 0) == -1) {
+		return -1;
+	}
+	return 0;
+}
+
+void display_result(int connection) {
+	int recieved = 0;
+	static char recv_buf[BUFFER_SIZE + 1];
+	while ((recieved = recv(connection, recv_buf, BUFFER_SIZE, 0)) > 0) {
+		recv_buf[recieved] = '\0';
+		printf("%s", recv_buf);
+	}
+	printf("\n");
 }
