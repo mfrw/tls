@@ -50,7 +50,8 @@ int main(int argc, char *argv[]) {
 		host_name = gethostbyname(proxy_host);
 	} else {
 		printf("Connecting to host '%s'\n", host);
-		host_name = gethostbyname(host);
+		/*host_name = gethostbyname(host);*/
+		host_name = gethostent();
 	}
 	if (!host_name) {
 		perror("Error in name resolution");

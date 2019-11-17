@@ -1,7 +1,7 @@
 #ifndef HTTP_H
 #define HTTP_H
 
-#define HTTP_PORT 80
+#define HTTP_PORT 8080
 #define MAX_GET_COMMAND 255
 #define BUFFER_SIZE 255
 #define DEFAULT_LINE_LEN 255
