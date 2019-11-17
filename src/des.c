@@ -226,8 +226,8 @@ void des_encrypt(const unsigned char *plaintext, const int plaintext_len,
 	// First, pad the input to a multiple of DES_BLOCK_SIZE
 	padding_len = DES_BLOCK_SIZE - (plaintext_len % DES_BLOCK_SIZE);
 	padded_plaintext = malloc(plaintext_len + padding_len);
-	// This implements NIST 800-3A padding
-	memset(padded_plaintext, 0x0, plaintext_len + padding_len);
+	// This implements PKCS #5 padding.
+	memset(padded_plaintext, padding_len, plaintext_len + padding_len);
 	padded_plaintext[plaintext_len] = 0x80;
 	memcpy(padded_plaintext, plaintext, plaintext_len);
 	des_operate(padded_plaintext, plaintext_len + padding_len, ciphertext,
